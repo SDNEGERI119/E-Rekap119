@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistem Rekap Absensi Pegawai - SDN 119 Cijagra</title>
+
+<!-- Inter Font & FontAwesome Icons -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --bg-main: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  padding: 24px;
+}
+
+.main-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* HEADER & NAVBAR LAYAR */
+.header-card {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+  padding: 28px 32px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-title h1 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.header-title p {
+  color: #94a3b8;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* CARD STATISTIK LAYAR */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.stat-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.stat-icon.blue { background: #eff6ff; color: #2563eb; }
+.stat-icon.green { background: #f0fdf4; color: #16a34a; }
+.stat-icon.amber { background: #fffbeb; color: #d97706; }
+
+.stat-info h4 {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-info .value {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* FILTER PANEL LAYAR */
+.filter-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.form-control {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+  background-color: #fff;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.btn-print {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s;
+  align-self: flex-end;
+}
+
+.btn-print:hover {
+  background: var(--primary-hover);
+}
+
+/* TABEL LAYAR */
+.table-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background: #f8fafc;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-main);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background-color: #f8fafc;
+}
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* Styling Badge Keterangan */
+.badge-hadir { background: #f0fdf4; color: #16a34a; } /* Hijau */
+.badge-sakit { background: #fefce8; color: #ca8a04; } /* Kuning */
+.badge-izin  { background: #eff6ff; color: #2563eb; } /* Biru */
+.badge-strip { background: #fef2f2; color: #dc2626; } /* Merah */
+.ttd-container-print {
+  display: none;
+}
+
+/* MODE CETAK PRINT - PRESISI F4/LEGAL */
+@page {
+  size: 215mm 330mm;
+  margin: 10mm;
+}
+
+@media print {
+  body {
+    background: #ffffff !important;
+    padding: 0 !important;
+    color: #000000 !important;
+    font-size: 8.5pt !important;
+    line-height: 1.2;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .header-card, .stats-grid, .filter-card, .btn-print {
+    display: none !important;
+  }
+
+  .main-wrapper {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .print-kop {
+    display: block !important;
+    text-align: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+  }
+
+  .print-kop h2 {
+    font-size: 12pt !important;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .print-kop p {
+    font-size: 8.5pt !important;
+    margin-top: 1px;
+  }
+
+  .print-periode {
+    display: block !important;
+    text-align: center;
+    font-size: 9.5pt !important;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .table-card {
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    border: 1px solid #000000 !important;
+  }
+
+  th, td {
+    border: 1px solid #000000 !important;
+    padding: 3px 5px !important;
+    font-size: 8.5pt !important;
+    color: #000000 !important;
+  }
+
+  tr.row-red td {
+    color: #dc2626 !important;
+    font-weight: 600 !important;
+  }
+
+  tr.row-red .badge {
+    color: #dc2626 !important;
+  }
+
+  th {
+    background: #f1f5f9 !important;
+    text-align: center !important;
+    font-weight: bold !important;
+    color: #000000 !important;
+  }
+
+  td.cell-nama {
+    white-space: nowrap !important;
+  }
+
+  .badge {
+    background: none !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    font-weight: normal !important;
+  }
+
+  .print-summary {
+    display: block !important;
+    margin-top: 6px;
+    border: 1px solid #000000;
+    padding: 5px 8px;
+    font-size: 8.5pt !important;
+    background: #fff;
+  }
+
+  .ttd-container-print {
+    display: flex !important;
+    justify-content: space-between;
+    margin-top: 28px;
+    page-break-inside: avoid;
+  }
+
+  .ttd-box {
+    width: 250px;
+    text-align: center;
+    font-size: 8.5pt !important;
+  }
+
+  .ttd-space {
+    height: 75px !important;
+  }
+
+  .print-footer {
+    display: flex !important;
+    justify-content: space-between;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 7.5pt !important;
+    color: #000;
+    border-top: 1px solid #000;
+    padding-top: 2px;
+  }
+}
+
+.print-kop, .print-periode, .print-summary, .print-footer {
+  display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="main-wrapper">
+
+  <div class="header-card">
+    <div class="header-title">
+      <h1>Sistem Laporan Absensi Pegawai</h1>
+      <p>Sekolah Dasar Negeri 119 Cijagra - Kota Bandung</p>
+    </div>
+  </div>
+
+  <div class="print-kop">
+    <h2>LAPORAN REKAPITULASI ABSENSI PEGAWAI</h2>
+    <p>SDN 119 CIJAGRA KOTA BANDUNG</p>
+  </div>
+  <div class="print-periode" id="printPeriode"></div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fa-solid fa-list-check"></i></div>
+      <div class="stat-info">
+        <h4>Total Data Row</h4>
+        <div class="value" id="statTotal">0</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fa-solid fa-user-check"></i></div>
+      <div class="stat-info">
+        <h4>Total Kehadiran</h4>
+        <div class="value" id="statHadir">0</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon amber"><i class="fa-solid fa-user-xmark"></i></div>
+      <div class="stat-info">
+        <h4>Izin / Sakit / Libur</h4>
+        <div class="value" id="statIzin">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-card">
+    <div class="form-group">
+      <label><i class="fa-regular fa-calendar-days"></i> Pilih Bulan & Tahun</label>
+      <select id="monthFilter" class="form-control">
+        <option value="">-- Pilih Bulan --</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label><i class="fa-solid fa-user"></i> Pilih Nama Pegawai</label>
+      <select id="nameFilter" class="form-control">
+        <option value="">-- Pilih Nama Pegawai --</option>
+      </select>
+    </div>
+    <button onclick="printReport()" class="btn-print">
+      <i class="fa-solid fa-print"></i> Cetak / Save PDF
+    </button>
+  </div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 85px; text-align: center;">TANGGAL</th>
+          <th style="width: 70px; text-align: center;">HARI</th>
+          <th>NAMA PTK / PEGAWAI</th>
+          <th style="width: 85px; text-align: center;">JAM MASUK</th>
+          <th style="width: 85px; text-align: center;">JAM PULANG</th>
+          <th style="width: 90px; text-align: center;">IZIN / SAKIT</th>
+          <th style="width: 110px; text-align: center;">KETERANGAN</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 20px;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Memuat data absensi...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="print-summary" id="printSummary"></div>
+
+  <div class="ttd-container-print">
+    <div class="ttd-box">
+      <p>Menyetujui,<br><span id="ttdJabatan">-</span></p>
+      <div class="ttd-space"></div>
+      <p><strong id="ttdNama">-</strong><br><span id="ttdNip">-</span></p>
+    </div>
+    <div class="ttd-box">
+      <p>Mengetahui,<br>Kepala Sekolah SDN 119 Cijagra</p>
+      <div class="ttd-space"></div>
+      <p><strong>IDA WARDATIN, S. Pd.</strong><br>NIP. 19710412 200801 2 005</p>
+    </div>
+  </div>
+
+  <div class="print-footer">
+    <span>Sumber Data: Kepegawaian SDN 119 Cijagra</span>
+    <span id="printTimestamp"></span>
+  </div>
+
+</div>
+
+<script>
+const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbyXUYbK1f6LMwGv3pNMwZzd-YhPXb1Do8nX9eKMeXfKF-F3kIo0BCC6i5NgHlYftcn0oQ/exec';
+
+const kalenderPendidikan = {
+  "01/01/2026": "Tahun Baru Masehi",
+  "16/01/2026": "Isra Mi'raj Nabi Muhammad SAW",
+  "17/02/2026": "Tahun Baru Imlek",
+  "19/03/2026": "Hari Raya Nyepi",
+  "20/03/2026": "Hari Raya Idul Fitri 1447 H",
+  "21/03/2026": "Hari Raya Idul Fitri 1447 H",
+  "03/04/2026": "Wafat Yesus Kristus",
+  "01/05/2026": "Hari Buruh Internasional",
+  "14/05/2026": "Kenaikan Yesus Kristus",
+  "27/05/2026": "Hari Raya Idul Adha 1447 H",
+  "31/05/2026": "Hari Raya Waisak",
+  "01/06/2026": "Hari Lahir Pancasila",
+  "16/06/2026": "Tahun Baru Islam 1448 H",
+  "17/08/2026": "Hari Kemerdekaan RI",
+  "25/08/2026": "Maulid Nabi Muhammad SAW",
+  "25/12/2026": "Hari Raya Natal",
+  
+  "22/06/2026": "Libur Semester 2",
+  "23/06/2026": "Libur Semester 2",
+  "24/06/2026": "Libur Semester 2",
+  "25/06/2026": "Libur Semester 2"
+};
+
+const ttdData = {
+  "rizki muhammad ramdani": { jabatan: "Operator Arkas / Aset", nama: "RIZKI MUHAMMAD RAMDANI", nip: "NIP. -" },
+  "aji sofian": { jabatan: "Guru PAIBP", nama: "AJI SOFIAN, S. Pd.", nip: "NUPTK. 1560774675130233" },
+  "iim mutmainah": { jabatan: "Tenaga Administrasi Sekolah", nama: "IIM MUTMAINAH", nip: "NIP. -" },
+  "yayang ratna juwita permata sari": { jabatan: "Wali Kelas 6B", nama: "YAYANG RATNA JUWITA PERMATA SARI, S. Pd.", nip: "NUPTK. 9360776677230053" },
+  "amelia rizki aulia": { jabatan: "Wali Kelas 4B", nama: "AMELIA RIZKI AULIA", nip: "NIP. -" },
+  "rian febriana": { jabatan: "Penjaga Sekolah", nama: "RIAN FEBRIANA", nip: "NIP. -" },
+  "supriati": { jabatan: "Laysus", nama: "SUPRIATI", nip: "NIP. -" }
+};
+
+let allData = [];
+
+function getNamaBulanIndonesia(bulanIdx) {
+  const bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+  return bulan[bulanIdx] || '';
+}
+
+function getNamaHariIndonesia(dayIdx) {
+  const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  return hari[dayIdx] || '';
+}
+
+function getVal(obj, keys) {
+  if (!obj) return '';
+  for (let k of keys) {
+    for (let actualKey in obj) {
+      if (actualKey.toLowerCase().replace(/[^a-z0-9]/g, '') === k.toLowerCase().replace(/[^a-z0-9]/g, '')) {
+        return obj[actualKey] !== undefined && obj[actualKey] !== null ? String(obj[actualKey]) : '';
+      }
+    }
+  }
+  return '';
+}
+
+function isValidTime(val) {
+  if (!val) return false;
+  const str = String(val).trim();
+  return str !== '' && str !== '-' && str !== '00:00:00' && str !== '00:00';
+}
+
+function isValidIzin(val) {
+  if (!val) return false;
+  const str = String(val).trim();
+  return str !== '' && str !== '-';
+}
+
+window.handleDataFromGoogle = function(rawData) {
+  const tbody = document.getElementById('tableBody');
+  let dataArray = Array.isArray(rawData) ? rawData : (rawData.data || rawData.result || []);
+
+  if (!dataArray || dataArray.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: red; padding: 20px;">Data kosong dari Google Sheets.</td></tr>';
+    return;
+  }
+
+  allData = dataArray.map(d => {
+    let tglStr = getVal(d, ['tanggal', 'tgl', 'date']);
+    let hariStr = getVal(d, ['hari', 'day']);
+    let nama = getVal(d, ['nama', 'nama_ptk', 'namaptk', 'name']);
+    let masuk = getVal(d, ['jammasuk', 'masuk', 'timein']);
+    let pulang = getVal(d, ['jampulang', 'pulang', 'timeout']);
+    let izinSakit = getVal(d, ['izinsakit', 'izin', 'sakit', 'leavesick']);
+    let ket = getVal(d, ['keterangan', 'ket', 'notes']);
+
+    let thn = '', bln = '', tgl = '';
+    let dateObj = null;
+
+    if (tglStr) {
+      if (tglStr.includes('/')) {
+        const parts = tglStr.split('/');
+        if (parts.length === 3) {
+          tgl = parts[0].padStart(2, '0');
+          bln = parts[1].padStart(2, '0');
+          thn = parts[2].split(' ')[0];
+          dateObj = new Date(parseInt(thn), parseInt(bln) - 1, parseInt(tgl));
+        }
+      } else if (tglStr.includes('-')) {
+        const parts = tglStr.split('-');
+        if (parts.length === 3) {
+          thn = parts[0];
+          bln = parts[1].padStart(2, '0');
+          tgl = parts[2].split('T')[0].padStart(2, '0');
+          dateObj = new Date(parseInt(thn), parseInt(bln) - 1, parseInt(tgl));
+        }
+      }
+    }
+
+    if (!hariStr && dateObj && !isNaN(dateObj.getTime())) {
+      hariStr = getNamaHariIndonesia(dateObj.getDay());
+    }
+
+    const formattedTgl = (tgl && bln && thn) ? `${tgl}/${bln}/${thn}` : tglStr;
+
+    return {
+      nama_ptk: nama,
+      hari: hariStr,
+      masuk: masuk,
+      pulang: pulang,
+      izin_sakit: izinSakit,
+      keterangan: ket,
+      formattedTanggal: formattedTgl,
+      monthKey: (thn && bln) ? `${thn}-${bln}` : ''
+    };
+  });
+
+  populateDropdowns();
+  renderTable();
+
+  document.getElementById('nameFilter').addEventListener('change', renderTable);
+  document.getElementById('monthFilter').addEventListener('change', renderTable);
+};
+
+function loadData() {
+  // Coba ambil data via Fetch terlebih dahulu
+  fetch(SHEET_API_URL)
+    .then(res => res.json())
+    .then(data => {
+      window.handleDataFromGoogle(data);
+    })
+    .catch(() => {
+      // Jika Fetch terhalang CORS/File protocol, fallback ke JSONP Script Tag
+      const script = document.createElement('script');
+      script.src = `${SHEET_API_URL}?callback=handleDataFromGoogle`;
+      script.onerror = function() {
+        document.getElementById('tableBody').innerHTML = '<tr><td colspan="7" style="text-align: center; color: red; padding: 20px;">Gagal terhubung ke Google Sheets.<br><small style="color: #64748b;">Pastikan Web App diset "Who has access: Anyone" dan buka file melalui Local Server (Live Server) jika diperlukan.</small></td></tr>';
+      };
+      document.body.appendChild(script);
+    });
+}
+
+function populateDropdowns() {
+  const monthSelect = document.getElementById('monthFilter');
+  monthSelect.innerHTML = '<option value="">-- Pilih Bulan --</option>';
+
+  const months = [...new Set(allData.map(d => d.monthKey).filter(m => m !== ''))];
+  months.sort().forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m;
+    const [th, bl] = m.split('-');
+    opt.textContent = `${getNamaBulanIndonesia(parseInt(bl) - 1)} ${th}`;
+    monthSelect.appendChild(opt);
+  });
+
+  const nameSelect = document.getElementById('nameFilter');
+  nameSelect.innerHTML = '<option value="">-- Pilih Nama Pegawai --</option>';
+
+  const names = [...new Set(allData.map(d => d.nama_ptk).filter(n => n && n.trim() !== ''))];
+  names.sort().forEach(n => {
+    const opt = document.createElement('option');
+    opt.value = n;
+    opt.textContent = n;
+    nameSelect.appendChild(opt);
+  });
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+
+  const selectedMonth = document.getElementById('monthFilter').value;
+  const selectedName = document.getElementById('nameFilter').value;
+
+  if (!selectedMonth || !selectedName) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px; color: #64748b;"><i class="fa-solid fa-filter" style="margin-right: 8px;"></i> Silakan pilih <strong>Bulan</strong> dan <strong>Nama Pegawai</strong> terlebih dahulu untuk menampilkan data.</td></tr>';
+    document.getElementById('statTotal').innerText = 0;
+    document.getElementById('statHadir').innerText = 0;
+    document.getElementById('statIzin').innerText = 0;
+    document.getElementById('printPeriode').innerText = '';
+    document.getElementById('printSummary').innerText = '';
+    return;
+  }
+
+  const filtered = allData.filter(d => {
+    const matchMonth = d.monthKey === selectedMonth;
+    const matchName = d.nama_ptk.toLowerCase() === selectedName.toLowerCase();
+    return matchMonth && matchName;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: #64748b;">Tidak ada data absensi untuk pilihan tersebut.</td></tr>';
+    document.getElementById('statTotal').innerText = 0;
+    document.getElementById('statHadir').innerText = 0;
+    document.getElementById('statIzin').innerText = 0;
+    return;
+  }
+
+  let totalHadir = 0;
+  let totalIzin = 0;
+
+  filtered.forEach(d => {
+    const hasMasuk = isValidTime(d.masuk);
+    const hasPulang = isValidTime(d.pulang);
+    const hasIzin = isValidIzin(d.izin_sakit);
+    
+    const namaLibur = kalenderPendidikan[d.formattedTanggal];
+    const hariLower = (d.hari || '').toLowerCase().trim();
+    const isWeekend = hariLower.includes('sabtu') || hariLower.includes('minggu') || hariLower.includes('sat') || hariLower.includes('sun');
+    const isRedDay = isWeekend || !!namaLibur;
+
+    let displayKeterangan = `<span class="badge badge-strip">-</span>`;
+
+    // Logika Keterangan Baru
+    if (hasIzin) {
+      const izinText = d.izin_sakit.trim().toLowerCase();
+
+      // Jika memuat kata 'sakit', Keterangan = Sakit (Warna Kuning)
+      if (izinText.includes('sakit')) {
+        displayKeterangan = `<span class="badge badge-sakit">Sakit</span>`;
+      } else {
+        // Jika selain sakit (kegiatan/izin), Keterangan = Izin (Warna Biru)
+        displayKeterangan = `<span class="badge badge-izin">Izin</span>`;
+      }
+      totalIzin++;
+    } else if (hasMasuk && hasPulang) {
+      // Hadir hanya jika Jam Masuk DAN Jam Pulang keduanya terisi (Warna Hijau)
+      displayKeterangan = `<span class="badge badge-hadir">Hadir</span>`;
+      totalHadir++;
+    } else if (namaLibur) {
+      displayKeterangan = `<span class="badge badge-libur">${namaLibur}</span>`;
+      totalIzin++;
+    } else if (isWeekend) {
+      displayKeterangan = `<span class="badge badge-libur">Libur Akhir Pekan</span>`;
+    } else {
+      // Jika salah satu / keduanya kosong (Warna Merah)
+      displayKeterangan = `<span class="badge badge-strip">-</span>`;
+    }
+
+    const tr = document.createElement('tr');
+    if (isRedDay) {
+      tr.classList.add('row-red');
+    }
+
+    tr.innerHTML = `
+      <td style="text-align: center; font-weight: 500;">${d.formattedTanggal || '-'}</td>
+      <td style="text-align: center;">${d.hari || '-'}</td>
+      <td class="cell-nama" style="font-weight: 600; color: #1e293b;">${d.nama_ptk || '-'}</td>
+      <td style="text-align: center;">${d.masuk || '-'}</td>
+      <td style="text-align: center;">${d.pulang || '-'}</td>
+      <td style="text-align: center;">
+        ${hasIzin ? d.izin_sakit : '-'}
+      </td>
+      <td style="text-align: center;">${displayKeterangan}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('statTotal').innerText = filtered.length;
+  document.getElementById('statHadir').innerText = totalHadir;
+  document.getElementById('statIzin').innerText = totalIzin;
+
+  const [th, bl] = selectedMonth.split('-');
+  document.getElementById('printPeriode').innerHTML = `PERIODE: ${getNamaBulanIndonesia(parseInt(bl) - 1).toUpperCase()} ${th}`;
+
+  document.getElementById('printSummary').innerHTML = `
+    <strong>RINGKASAN KEHADIRAN:</strong> Total Kehadiran Kerja: ${totalHadir} Hari | Total Izin/Sakit/Libur: ${totalIzin} Hari
+  `;
+
+  let foundTTD = null;
+  const activeName = selectedName.toLowerCase();
+  for (const key in ttdData) {
+    if (activeName.includes(key)) {
+      foundTTD = ttdData[key];
+      break;
+    }
+  }
+
+  if (foundTTD) {
+    document.getElementById('ttdJabatan').innerText = foundTTD.jabatan;
+    document.getElementById('ttdNama').innerText = foundTTD.nama;
+    document.getElementById('ttdNip').innerText = foundTTD.nip;
+  } else {
+    document.getElementById('ttdJabatan').innerText = "-";
+    document.getElementById('ttdNama').innerText = "-";
+    document.getElementById('ttdNip').innerText = "-";
+  }
+}
+
+function printReport() {
+  const selectedMonth = document.getElementById('monthFilter').value;
+  const selectedName = document.getElementById('nameFilter').value;
+
+  if (!selectedMonth || !selectedName) {
+    alert("Silakan pilih Bulan dan Nama Pegawai terlebih dahulu sebelum mencetak report.");
+    return;
+  }
+
+  const now = new Date();
+  document.getElementById('printTimestamp').innerText = `Dicetak pada: ${now.toLocaleDateString('id-ID')} - ${now.toLocaleTimeString('id-ID')}`;
+  
+  // Menggunakan silent: false dengan sistem dialog native Windows
+  window.print();
+}
+
+loadData();
+</script>
+
+</body>
+</html>
